@@ -1,24 +1,35 @@
 <script context="module">
     export async function load ({ fetch }) {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=10&offset=0`);
-        const data = await response.json();
+        const fetchPokemons = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=10&offset=0');
+        const fetchMoves = await fetch('https://pokeapi.co/api/v2/move/?limit=10&offset=0');
+        const fetchLocations = await fetch('https://pokeapi.co/api/v2/location/?limit=10&offset=0');
 
-        if (response.ok) {
-            return {
-                status: response.status,
-                props: {
-                    pokemons: data.results,
-                    nextPageUrl: data.next,
-                    totalCount: data.count,
-                    displayedCount: 10,
+        return Promise.all([fetchPokemons, fetchMoves, fetchLocations])
+            .then(async ([ pokemonsResponse, movesResponse, locationsResponse ]) => {
+                if (pokemonsResponse.ok && movesResponse.ok && locationsResponse.ok) {
+                    return [
+                        await pokemonsResponse.json(),
+                        await movesResponse.json(),
+                        await locationsResponse.json(),
+                    ];
+                } else {
+                    throw new Error('Failed to fetch data');
                 }
-            }
-        }
-
-        return {
-            status: response.status,
-            error: new Error('Failed to fetch pokemons')
-        }
+            }).then(([ pokemons, moves, locations ]) => {
+                console.log(pokemons, moves, locations)
+                return {
+                    props: {
+                        pokemons: pokemons.results,
+                        moves: moves.results,
+                        locations: locations.results,
+                    }
+                };
+            }).catch(error => {
+                return {
+                    status: error.status,
+                    error: error.message,
+                };
+            });
     }
 </script>
 
@@ -26,6 +37,8 @@
     import Card from '$lib/components/card.svelte';
 
     export let pokemons;
+    export let moves;
+    export let locations;
     export let nextPageUrl;
     export let totalCount;
     export let displayedCount;
@@ -56,9 +69,9 @@
         <!-- <p>Currently showing {displayedCount} out of {totalCount}</p> -->
     </header>
     <section class="flex gap-3 mx-40">
-        <Card cardTitle="Pokemons" cardData={pokemons}/>
-        <Card cardData={[]}/>
-        <Card cardData={[]}/>
+        <Card cardTitle="🐗 Pokemons" cardData={pokemons}/>
+        <Card cardTitle="⚡ Moves" cardData={moves}/>
+        <Card cardTitle="🗺️ Locations" cardData={locations}/>
     </section>
     
     <!-- {#if isLoading}

@@ -1,4 +1,6 @@
 <script>
+    import { humanizeCase } from "$lib/utils";
+
     export let cardData = [];
     export let cardTitle = '';
 </script>
@@ -12,8 +14,8 @@
             <p>No data...</p>
         {:else}
             <ul>
-                {#each cardData as pokemon}
-                    <li class="capitalize text-purple-900">{pokemon.name}</li>
+                {#each cardData as data}
+                    <li class="capitalize text-purple-900">{humanizeCase(data.name)}</li>
                 {/each}
             </ul>
             <p class="text-fuchsia-900 font-bold">See more...</p>
