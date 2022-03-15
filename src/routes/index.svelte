@@ -23,6 +23,8 @@
 </script>
 
 <script>
+    import Card from '$lib/components/card.svelte';
+
     export let pokemons;
     export let nextPageUrl;
     export let totalCount;
@@ -47,16 +49,21 @@
     }
 </script>
 
-<h1>Welcome to PokemonDB</h1>
-<p>Currently showing {displayedCount} out of {totalCount}</p>
-<ul>
-{#each pokemons as pokemon}
-    <li>{pokemon.name}</li>
-{/each}
-</ul>
-
-{#if isLoading}
-    <p>Fetching pokemons...</p>
-{:else }
-    <button on:click={loadMorePokemons}>Load more...</button>
-{/if}
+<main>
+    <header class="text-center flex justify-center items-center flex-col pt-28 pb-6">
+        <img src="/pokeball.svg" alt="pokeball" class="w-28 h-28 my-4 hover:rotate-45 transition-transform" />
+        <h1 class="text-5xl font-bold text-teal-800">Welcome to PokemonDB</h1>
+        <!-- <p>Currently showing {displayedCount} out of {totalCount}</p> -->
+    </header>
+    <section class="flex gap-3 mx-40">
+        <Card cardTitle="Pokemons" cardData={pokemons}/>
+        <Card cardData={[]}/>
+        <Card cardData={[]}/>
+    </section>
+    
+    <!-- {#if isLoading}
+        <p>Fetching pokemons...</p>
+    {:else }
+        <button on:click={loadMorePokemons}>Load more...</button>
+    {/if} -->
+</main>
